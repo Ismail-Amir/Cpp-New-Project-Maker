@@ -2,6 +2,8 @@
 
 This repository provides a script to quickly scaffold a new directory for C++ application development. It sets up a basic project structure with CMake, vcpkg for dependency management, and configuration for Clangd LSP.
 
+You can find this project on [GitLab](https://gitlab.com/cpp_projects7533608/cpp-project-new-directory-maker)
+
 ## Prerequisites
 
 ### A. For Windows OS
