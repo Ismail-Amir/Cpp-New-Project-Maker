@@ -734,3 +734,5 @@ if [ "$vcpkg_integration" = "yes" ] && [ "$vcpkg_mode" = "manifest" ] && [ ${#de
 fi
 echo "  ./build.sh   (on Linux/macOS) or build.bat (on Windows)"
 echo "  code .       (to open in VS Code)"
+
+exit 0
