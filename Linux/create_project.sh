@@ -713,6 +713,46 @@ if [ "$vcpkg_integration" = "yes" ] && [ "$vcpkg_mode" = "classic" ] && [ ${#dep
 fi
 
 # ----------------------------------------------------------------------
+# Generate .clangd immediately if VS Code settings were requested
+# ----------------------------------------------------------------------
+if [ "$add_vscode" = "yes" ] && [ -f ".clangd.in" ]; then
+    print_info "Pre-generating .clangd for immediate LSP support..."
+    
+    # Pick the first available preset (prefer debug for development)
+    if [ -f "CMakePresets.json" ]; then
+        # Determine OS for preset selection
+        os_type="$(uname -s)"
+        case "$os_type" in
+            Linux*)     preset_os="linux" ;;
+            Darwin*)    preset_os="macos" ;;
+            MINGW*|MSYS*|CYGWIN*) preset_os="windows" ;;
+            *)          preset_os="" ;;
+        esac
+        
+        if [ -n "$preset_os" ]; then
+            # Try debug preset first, then release
+            preset_name="${preset_os}-debug"
+            
+            print_info "Running minimal CMake configuration with preset: $preset_name"
+            
+            # Create build directory for the preset
+            mkdir -p "build/${preset_name}"
+            
+            # Run CMake configuration only (no build) to generate .clangd
+            if cmake --preset "$preset_name" > /dev/null 2>&1; then
+                print_success ".clangd generated successfully from preset: $preset_name"
+            else
+                print_warning "Failed to configure with preset. .clangd may need manual generation."
+            fi
+        else
+            print_warning "Unknown OS. Skipping automatic .clangd generation."
+        fi
+    else
+        print_warning "CMakePresets.json not found. Skipping .clangd generation."
+    fi
+fi
+
+# ----------------------------------------------------------------------
 # Git initialization
 # ----------------------------------------------------------------------
 if [ "$git_init" = "yes" ]; then
